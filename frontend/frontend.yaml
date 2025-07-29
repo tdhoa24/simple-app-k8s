@@ -27,6 +27,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: tdhoa97/frontend:v1
+          image: tdhoa97/frontend:v2
           ports:
             - containerPort: 80
