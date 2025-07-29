@@ -1,3 +1,27 @@
+# 1. Create the PVC first
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+# 2. Create the Service next
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: postgres
+---
+# 3. Finally, create the Deployment (which uses the PVC)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -23,15 +47,9 @@ spec:
             - name: POSTGRES_PASSWORD
               value: postgres
           volumeMounts:
-            - name: postgres-data
-              mountPath: /var/lib/postgresql/data
-            - name: initdb
-              mountPath: /docker-entrypoint-initdb.d/init.sql
-              subPath: init.sql
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-data
       volumes:
         - name: postgres-data
           persistentVolumeClaim:
             claimName: postgres-pvc
-        - name: initdb
-          configMap:
-            name: postgres-initdb
