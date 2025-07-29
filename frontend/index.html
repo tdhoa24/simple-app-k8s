@@ -2,105 +2,201 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Microservices Demo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simple Microservices App</title>
   <style>
+    :root {
+      --primary: #007bff;
+      --bg: #f9fafb;
+      --text: #1f2937;
+      --white: #ffffff;
+      --gray: #e5e7eb;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: var(--bg);
+      color: var(--text);
       padding: 2rem;
     }
+
     h1 {
       text-align: center;
+      font-size: 2rem;
       margin-bottom: 2rem;
     }
+
     .container {
       display: flex;
       gap: 2rem;
+      flex-wrap: wrap;
       justify-content: center;
     }
-    .card {
-      background: white;
+
+    .box {
+      background-color: var(--white);
+      padding: 2rem;
       border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      width: 300px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      width: 350px;
+      transition: transform 0.2s ease;
     }
-    input, button {
-      width: 100%;
-      margin-top: 0.5rem;
-      padding: 0.5rem;
-      font-size: 1rem;
+
+    .box:hover {
+      transform: scale(1.02);
     }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+    }
+
+    input {
+      width: calc(100% - 100px);
+      padding: 0.6rem;
+      border: 1px solid var(--gray);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      outline: none;
+      transition: border 0.2s ease;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+    }
+
+    button {
+      padding: 0.6rem 1rem;
+      border: none;
+      background-color: var(--primary);
+      color: var(--white);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s ease;
+      margin-left: 0.5rem;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
     ul {
-      margin-top: 1rem;
       list-style: none;
       padding-left: 0;
+      margin-top: 1rem;
     }
+
     li {
-      background: #e0e7ff;
+      background-color: var(--gray);
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
       margin-bottom: 0.5rem;
-      padding: 0.5rem;
-      border-radius: 6px;
+    }
+
+    .form-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .box {
+        width: 100%;
+      }
+
+      .form-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      input {
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+
+      button {
+        width: 100%;
+        margin-left: 0;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>📦 Microservices UI</h1>
+  <h1>🚀 Microservices Demo App</h1>
   <div class="container">
-    <div class="card">
-      <h2>Users</h2>
-      <input id="username" placeholder="Enter user name" />
-      <button onclick="createUser()">Add User</button>
-      <button onclick="loadUsers()">Load Users</button>
-      <ul id="user-list"></ul>
+    <div class="box">
+      <h2>👤 Users</h2>
+      <div class="form-group">
+        <input type="text" id="username" placeholder="Enter name" />
+        <button onclick="addUser()">Add</button>
+      </div>
+      <ul id="users"></ul>
     </div>
-
-    <div class="card">
-      <h2>Posts</h2>
-      <input id="posttitle" placeholder="Enter post title" />
-      <button onclick="createPost()">Add Post</button>
-      <button onclick="loadPosts()">Load Posts</button>
-      <ul id="post-list"></ul>
+    <div class="box">
+      <h2>📝 Posts</h2>
+      <div class="form-group">
+        <input type="text" id="posttitle" placeholder="Enter title" />
+        <button onclick="addPost()">Add</button>
+      </div>
+      <ul id="posts"></ul>
     </div>
   </div>
 
   <script>
-    const API_USERS = "/api/users";
-    const API_POSTS = "/api/posts";
+    const USER_API = 'http://localhost:5000/users';
+    const POST_API = 'http://localhost:5001/posts';
 
-    async function createUser() {
-      const name = document.getElementById("username").value;
-      await fetch(API_USERS, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+    async function loadUsers() {
+      try {
+        const res = await fetch(USER_API);
+        const data = await res.json();
+        document.getElementById('users').innerHTML =
+          data.map(u => `<li>${u.name}</li>`).join('');
+      } catch (e) {
+        console.error("Failed to load users", e);
+      }
+    }
+
+    async function addUser() {
+      const name = document.getElementById('username').value.trim();
+      if (!name) return;
+      await fetch(USER_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name })
       });
-      document.getElementById("username").value = "";
+      document.getElementById('username').value = '';
       loadUsers();
     }
 
-    async function createPost() {
-      const title = document.getElementById("posttitle").value;
-      await fetch(API_POSTS, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+    async function loadPosts() {
+      try {
+        const res = await fetch(POST_API);
+        const data = await res.json();
+        document.getElementById('posts').innerHTML =
+          data.map(p => `<li>${p.title}</li>`).join('');
+      } catch (e) {
+        console.error("Failed to load posts", e);
+      }
+    }
+
+    async function addPost() {
+      const title = document.getElementById('posttitle').value.trim();
+      if (!title) return;
+      await fetch(POST_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title })
       });
-      document.getElementById("posttitle").value = "";
+      document.getElementById('posttitle').value = '';
       loadPosts();
-    }
-
-    async function loadUsers() {
-      const res = await fetch(API_USERS);
-      const users = await res.json();
-      document.getElementById("user-list").innerHTML = users.map(u => `<li>${u[1]}</li>`).join('');
-    }
-
-    async function loadPosts() {
-      const res = await fetch(API_POSTS);
-      const posts = await res.json();
-      document.getElementById("post-list").innerHTML = posts.map(p => `<li>${p.title}</li>`).join('');
     }
 
     loadUsers();
