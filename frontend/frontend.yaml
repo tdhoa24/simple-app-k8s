@@ -27,6 +27,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: your-dockerhub-username/frontend:latest
+          image: tdhoa97/frontend:v1
           ports:
             - containerPort: 80
