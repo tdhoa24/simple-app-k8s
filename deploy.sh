@@ -19,5 +19,13 @@ microk8s kubectl apply -f post-service/post-service.yaml
 echo "🌐 Deploying Frontend..."
 microk8s kubectl apply -f frontend/frontend.yaml
 
-echo "✅ All services deployed successfully."
-echo "🌍 Access the frontend at: http://localhost:30123"
+echo "📊 Deploying monitoring stack (Prometheus & Grafana)..."
+microk8s kubectl apply -f monitoring/prometheus-config.yaml
+microk8s kubectl apply -f monitoring/prometheus-deployment.yaml
+microk8s kubectl apply -f monitoring/grafana-deployment.yaml
+microk8s kubectl apply -f monitoring/grafana-service.yaml
+
+echo "✅ All services and monitoring deployed successfully."
+echo "🌐 Access the frontend via NodePort: http://192.168.0.140:30123"
+echo "📈 Access Prometheus via NodePort: http://192.168.0.140:30900"
+echo "📊 Access Grafana via NodePort: http://192.168.0.140:30300"
