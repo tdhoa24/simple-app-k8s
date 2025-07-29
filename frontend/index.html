@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Microservices UI</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+      padding: 2rem;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 2rem;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 300px;
+    }
+    input, button {
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      width: 100%;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #4f46e5;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #4338ca;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 1rem;
+    }
+    li {
+      background: #eef2ff;
+      margin-bottom: 0.5rem;
+      padding: 0.5rem;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h1>📦 Microservices Demo</h1>
+
+  <div class="container">
+    <!-- User Service UI -->
+    <div class="card">
+      <h2>Users</h2>
+      <input type="text" id="username" placeholder="Enter user name" />
+      <button onclick="createUser()">Add User</button>
+      <button onclick="loadUsers()">Load Users</button>
+      <ul id="user-list"></ul>
+    </div>
+
+    <!-- Post Service UI -->
+    <div class="card">
+      <h2>Posts</h2>
+      <input type="text" id="posttitle" placeholder="Enter post title" />
+      <button onclick="createPost()">Add Post</button>
+      <button onclick="loadPosts()">Load Posts</button>
+      <ul id="post-list"></ul>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE_USERS = "/api/users"; // update if needed
+    const API_BASE_POSTS = "/api/posts"; // update if needed
+
+    async function createUser() {
+      const name = document.getElementById('username').value;
+      if (!name) return alert("Name is required");
+      await fetch(API_BASE_USERS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name })
+      });
+      document.getElementById('username').value = "";
+      loadUsers();
+    }
+
+    async function createPost() {
+      const title = document.getElementById('posttitle').value;
+      if (!title) return alert("Title is required");
+      await fetch(API_BASE_POSTS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title })
+      });
+      document.getElementById('posttitle').value = "";
+      loadPosts();
+    }
+
+    async function loadUsers() {
+      const res = await fetch(API_BASE_USERS);
+      const users = await res.json();
+      const ul = document.getElementById("user-list");
+      ul.innerHTML = users.map(u => `<li>${u[1]}</li>`).join("");
+    }
+
+    async function loadPosts() {
+      const res = await fetch(API_BASE_POSTS);
+      const posts = await res.json();
+      const ul = document.getElementById("post-list");
+      ul.innerHTML = posts.map(p => `<li>${p.title}</li>`).join("");
+    }
+
+    // Auto load on page load
+    loadUsers();
+    loadPosts();
+  </script>
+</body>
+</html>
