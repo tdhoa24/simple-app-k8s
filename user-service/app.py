@@ -1,45 +1,50 @@
-from flask import Flask, jsonify, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import psycopg2
+import os
 import time
 
 app = Flask(__name__)
-CORS(app)  # 🔥 Enable CORS for all routes
-
-# Retry until PostgreSQL is ready
-while True:
+CORS(app)
+# Wait for PostgreSQL to be ready
+for _ in range(10):
     try:
         conn = psycopg2.connect(
-            host="postgres",
+            host=os.getenv("DB_HOST", "localhost"),
             database="appdb",
-            user="appuser",
-            password="apppassword"
+            user="postgres",
+            password="postgres"
         )
-        cursor = conn.cursor()
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id SERIAL PRIMARY KEY,
-                name TEXT NOT NULL
-            );
-        """)
-        conn.commit()
         break
-    except Exception as e:
+    except psycopg2.OperationalError:
         print("Postgres not ready, retrying...")
-        time.sleep(1)
+        time.sleep(2)
+else:
+    raise Exception("Could not connect to PostgreSQL")
+
+cur = conn.cursor()
+cur.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name TEXT
+    )
+""")
+conn.commit()
 
 @app.route('/users', methods=['GET'])
 def get_users():
-    cursor.execute("SELECT * FROM users;")
-    users = cursor.fetchall()
-    return jsonify([{"id": u[0], "name": u[1]} for u in users])
+    cur.execute("SELECT * FROM users")
+    users = cur.fetchall()
+    return jsonify([{'id': u[0], 'name': u[1]} for u in users])
 
 @app.route('/users', methods=['POST'])
 def create_user():
     data = request.get_json()
-    cursor.execute("INSERT INTO users (name) VALUES (%s);", (data['name'],))
+    name = data['name']
+    cur.execute("INSERT INTO users (name) VALUES (%s) RETURNING id", (name,))
+    user_id = cur.fetchone()[0]
     conn.commit()
-    return jsonify({"status": "User created"}), 201
+    return jsonify({'id': user_id, 'name': name})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
