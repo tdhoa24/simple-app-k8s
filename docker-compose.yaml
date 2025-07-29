@@ -3,18 +3,16 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15
-    container_name: postgres
     environment:
       POSTGRES_DB: appdb
       POSTGRES_PASSWORD: postgres
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
 
   user-service:
     build: ./user-service
-    container_name: user-service
     environment:
       DB_HOST: postgres
     depends_on:
@@ -24,7 +22,6 @@ services:
 
   post-service:
     build: ./post-service
-    container_name: post-service
     environment:
       DB_HOST: postgres
     depends_on:
@@ -34,7 +31,6 @@ services:
 
   frontend:
     build: ./frontend
-    container_name: frontend
     ports:
       - "30123:80"
     depends_on:
@@ -42,4 +38,4 @@ services:
       - post-service
 
 volumes:
-  postgres-data:
+  pgdata:
