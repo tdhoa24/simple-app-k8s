@@ -5,19 +5,21 @@ metadata:
 spec:
   selector:
     app: user-service
+  type: NodePort
   ports:
-    - port: 80
-      targetPort: 5000
+    - port: 80               # External port
+      targetPort: 5000       # Container port
+      nodePort: 30500        # NodePort exposed on the host
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: user-service
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: user-service
-  replicas: 1
   template:
     metadata:
       labels:
@@ -28,8 +30,6 @@ spec:
           image: tdhoa97/user-service:v1
           ports:
             - containerPort: 5000
-              targetPort: 5000
-              nodePort: 30500
           env:
             - name: DB_HOST
               value: postgres

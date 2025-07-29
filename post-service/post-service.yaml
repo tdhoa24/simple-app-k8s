@@ -5,19 +5,21 @@ metadata:
 spec:
   selector:
     app: post-service
+  type: NodePort
   ports:
-    - port: 80
-      targetPort: 5001
+    - port: 80               # External port
+      targetPort: 5001       # Container port
+      nodePort: 30501        # NodePort exposed on the host
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: post-service
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: post-service
-  replicas: 1
   template:
     metadata:
       labels:
@@ -28,8 +30,6 @@ spec:
           image: tdhoa97/post-service:v1
           ports:
             - containerPort: 5001
-              targetPort: 5001
-              nodePort: 30501
           env:
             - name: DB_HOST
               value: postgres
