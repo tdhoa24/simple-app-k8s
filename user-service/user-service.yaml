@@ -28,6 +28,8 @@ spec:
           image: tdhoa97/user-service:v1
           ports:
             - containerPort: 5000
+              targetPort: 5000
+              nodePort: 30500
           env:
             - name: DB_HOST
               value: postgres
