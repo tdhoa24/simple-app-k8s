@@ -21,6 +21,7 @@ microk8s kubectl apply -f frontend/frontend.yaml
 
 echo "🔀 Creating Ingress for application services..."
 microk8s kubectl apply -f ingress/app-ingress.yaml
+microk8s kubectl apply -f ingress/ingress-controller-service.yaml
 
 echo "📊 Deploying Monitoring Stack (Prometheus & Grafana)..."
 microk8s kubectl apply -f monitoring/prometheus-config.yaml

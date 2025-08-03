@@ -19,6 +19,7 @@ microk8s kubectl delete -f postgres/postgres-configmap.yaml || true
 
 echo "📉 Deleting App Ingress..."
 microk8s kubectl delete -f ingress/app-ingress.yaml || true
+microk8s kubectl delete -f ingress/ingress-controller-service.yaml || true
 
 echo "📊 Deleting Monitoring Stack (Prometheus + Grafana)..."
 microk8s kubectl delete -f monitoring/prometheus-config.yaml || true
