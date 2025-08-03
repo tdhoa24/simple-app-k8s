@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
         - name: post-service
-          image: tdhoa97/post-service:v1
+          image: tdhoa97/post-service:v2
           ports:
             - containerPort: 5001
           env:
