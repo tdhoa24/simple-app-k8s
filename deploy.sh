@@ -19,17 +19,22 @@ microk8s kubectl apply -f post-service/post-service.yaml
 echo "🌐 Deploying Frontend (static site)..."
 microk8s kubectl apply -f frontend/frontend.yaml
 
+echo "🔀 Creating Ingress for application services..."
+microk8s kubectl apply -f ingress/app-ingress.yaml
+
 echo "📊 Deploying Monitoring Stack (Prometheus & Grafana)..."
-microk8s kubectl apply -f monitoring/prometheus-configmap.yaml
+microk8s kubectl apply -f monitoring/prometheus-config.yaml
 microk8s kubectl apply -f monitoring/prometheus-deployment.yaml
 microk8s kubectl apply -f monitoring/grafana-deployment.yaml
 microk8s kubectl apply -f monitoring/grafana-service.yaml
 microk8s kubectl apply -f monitoring/monitoring-ingress.yaml
 
+echo ""
 echo "✅ All services and monitoring deployed successfully."
-echo "🌍 Access everything via Ingress:"
-echo "   🖥️  Frontend:    http://<your-server-ip>/frontend"
-echo "   👤  User API:    http://<your-server-ip>/user-service/users"
-echo "   📝  Post API:    http://<your-server-ip>/post-service/posts"
-echo "   📈  Prometheus:  http://<your-server-ip>/prometheus"
-echo "   📊  Grafana:     http://<your-server-ip>/grafana"
+echo ""
+echo "🌍 Access your app via Ingress at:"
+echo "   🖥️  Frontend:     http://<your-server-ip>/frontend"
+echo "   👤  User API:     http://<your-server-ip>/user-service/users"
+echo "   📝  Post API:     http://<your-server-ip>/post-service/posts"
+echo "   📈  Prometheus:   http://<your-server-ip>/prometheus"
+echo "   📊  Grafana:      http://<your-server-ip>/grafana"
