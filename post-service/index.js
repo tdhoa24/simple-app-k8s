@@ -82,7 +82,8 @@ waitForDB()
       res.status(201).json(result.rows[0]);
     });
 
-    app.listen(port, () => console.log(`✅ Post service running on port ${port}`));
+    // ✅ KEY FIX HERE
+    app.listen(port, '0.0.0.0', () => console.log(`✅ Post service running on port ${port}`));
   })
   .catch(err => {
     console.error(err);
