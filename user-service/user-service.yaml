@@ -5,11 +5,10 @@ metadata:
 spec:
   selector:
     app: user-service
-  type: NodePort
+  type: ClusterIP
   ports:
-    - port: 80               # External port
-      targetPort: 5000       # Container port
-      nodePort: 30500        # NodePort exposed on the host
+    - port: 80
+      targetPort: 5000
 ---
 apiVersion: apps/v1
 kind: Deployment

@@ -1,4 +1,3 @@
-# monitoring/prometheus-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -7,12 +6,10 @@ data:
   prometheus.yml: |
     global:
       scrape_interval: 10s
-
     scrape_configs:
-      - job_name: 'user-service-nodeport'
+      - job_name: 'user-service'
         static_configs:
-          - targets: ['192.168.0.140:30500']
-
-      - job_name: 'post-service-nodeport'
+          - targets: ['user-service:80']
+      - job_name: 'post-service'
         static_configs:
-          - targets: ['192.168.0.140:30501']
+          - targets: ['post-service:80']

@@ -1,6 +1,18 @@
 #!/bin/bash
 
-echo "🧹 Deleting all microservice deployments..."
+set -e
+
+echo "🧹 Deleting all microservice deployments and ingress..."
+
+echo "🌐 Deleting Ingresses..."
+microk8s kubectl delete -f ingress/app-ingress.yaml || true
+microk8s kubectl delete -f monitoring/monitoring-ingress.yaml || true
+
+echo "📊 Deleting Monitoring Stack (Prometheus + Grafana)..."
+microk8s kubectl delete -f monitoring/prometheus-configmap.yaml
+microk8s kubectl delete -f monitoring/prometheus-deployment.yaml
+microk8s kubectl delete -f monitoring/grafana-deployment.yaml
+microk8s kubectl delete -f monitoring/grafana-service.yaml
 
 echo "🌐 Deleting Frontend..."
 microk8s kubectl delete -f frontend/frontend.yaml
@@ -15,10 +27,4 @@ echo "🐘 Deleting Postgres..."
 microk8s kubectl delete -f postgres/postgres.yaml
 microk8s kubectl delete -f postgres/postgres-configmap.yaml
 
-echo "📊 Deleting Monitoring Stack (Prometheus + Grafana)..."
-microk8s kubectl delete -f monitoring/prometheus-configmap.yaml
-microk8s kubectl delete -f monitoring/prometheus-deployment.yaml
-microk8s kubectl delete -f monitoring/grafana-service.yaml
-microk8s kubectl delete -f monitoring/grafana-deployment.yaml
-
-echo "🗑️ All services and monitoring stack deleted."
+echo "🗑️ All deployments, services, configmaps, and ingress rules deleted."

@@ -2,7 +2,7 @@
 
 set -e
 
-echo "🟢 Deploying microservices to MicroK8s..."
+echo "🟢 Deploying microservices to MicroK8s (Ingress-based)..."
 
 echo "📦 Creating ConfigMap for Postgres init.sql..."
 microk8s kubectl apply -f postgres/postgres-configmap.yaml
@@ -16,16 +16,20 @@ microk8s kubectl apply -f user-service/user-service.yaml
 echo "📝 Deploying Post Service..."
 microk8s kubectl apply -f post-service/post-service.yaml
 
-echo "🌐 Deploying Frontend..."
+echo "🌐 Deploying Frontend (static site)..."
 microk8s kubectl apply -f frontend/frontend.yaml
 
-echo "📊 Deploying monitoring stack (Prometheus & Grafana)..."
-microk8s kubectl apply -f monitoring/prometheus-config.yaml
+echo "📊 Deploying Monitoring Stack (Prometheus & Grafana)..."
+microk8s kubectl apply -f monitoring/prometheus-configmap.yaml
 microk8s kubectl apply -f monitoring/prometheus-deployment.yaml
 microk8s kubectl apply -f monitoring/grafana-deployment.yaml
 microk8s kubectl apply -f monitoring/grafana-service.yaml
+microk8s kubectl apply -f monitoring/monitoring-ingress.yaml
 
 echo "✅ All services and monitoring deployed successfully."
-echo "🌐 Access the frontend via NodePort: http://192.168.0.140:30123"
-echo "📈 Access Prometheus via NodePort: http://192.168.0.140:30900"
-echo "📊 Access Grafana via NodePort: http://192.168.0.140:30300"
+echo "🌍 Access everything via Ingress:"
+echo "   🖥️  Frontend:    http://<your-server-ip>/frontend"
+echo "   👤  User API:    http://<your-server-ip>/user-service/users"
+echo "   📝  Post API:    http://<your-server-ip>/post-service/posts"
+echo "   📈  Prometheus:  http://<your-server-ip>/prometheus"
+echo "   📊  Grafana:     http://<your-server-ip>/grafana"
