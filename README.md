@@ -97,6 +97,7 @@ For custom domain names or HTTPS:
 
 Use cert-manager + Let's Encrypt
 
+ingress for DNS: - host: abc.de
 📎 License
 This project is open-source and available for educational and personal use.
 
