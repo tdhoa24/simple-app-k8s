@@ -28,6 +28,7 @@ microk8s kubectl apply -f monitoring/prometheus-config.yaml
 microk8s kubectl apply -f monitoring/prometheus-deployment.yaml
 microk8s kubectl apply -f monitoring/grafana-deployment.yaml
 microk8s kubectl apply -f monitoring/grafana-service.yaml
+microk8s kubectl apply -f monitoring/monitoring-ingress.yaml
 
 echo ""
 echo "✅ All services and monitoring deployed successfully."

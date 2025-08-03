@@ -97,7 +97,17 @@ For custom domain names or HTTPS:
 
 Use cert-manager + Let's Encrypt
 
-ingress for DNS: - host: abc.de
+ingress for DNS: - host: abc.de 
+
+IF microk8s running on localhost :
+
+microk8s kubectl -n ingress patch daemonset nginx-ingress-microk8s-controller --type='json' -p='[{"op": "add", "path": "/spec/template/spec/hostNetwork", "value": true}]'
+
+microk8s kubectl -n ingress patch daemonset nginx-ingress-microk8s-controller --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/dnsPolicy", "value": "ClusterFirstWithHostNet"}]'
+THEN
+ microk8s kubectl -n ingress get pods -o wide
+ss -tuln | grep 30080
+
 📎 License
 This project is open-source and available for educational and personal use.
 

@@ -26,6 +26,7 @@ microk8s kubectl delete -f monitoring/prometheus-config.yaml || true
 microk8s kubectl delete -f monitoring/prometheus-deployment.yaml || true
 microk8s kubectl delete -f monitoring/grafana-deployment.yaml || true
 microk8s kubectl delete -f monitoring/grafana-service.yaml || true
+microk8s kubectl delete -f monitoring/monitoring-ingress.yaml || true
 
 echo ""
 echo "🗑️  All services and Ingress rules have been deleted."
